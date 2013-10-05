@@ -68,29 +68,9 @@ static DEFINE_PER_CPU(struct cpu_freq, cpu_freq_info);
 static int override_cpu;
 
 /** cmdline defs **/
-uint32_t arg_minfreq = 384000;
 uint32_t maxscroff = 0;
-uint32_t maxscroff_freq = 384000;
+uint32_t maxscroff_freq = 702000;
 uint32_t old_max = 0;
-
-/* min frequency */
-static int __init cpufreq_read_arg_minfreq(char *min_uc)
-{
-	unsigned long ui_khz;
-	int err;
-
-	err = strict_strtoul(min_uc, 0, &ui_khz);
-	if (err) {
-	    arg_minfreq = 384000;
-	    printk(KERN_INFO "[Min CPU freq]: min_uc='%i'\n", arg_minfreq);
-	    return 1;
-	}
-
-	arg_minfreq = ui_khz;
-        return 1;
-}
-
-__setup("min_uc=", cpufreq_read_arg_minfreq);
 
 static int __init cpufreq_read_arg_maxscroff(char *max_so)
 {
@@ -426,11 +406,6 @@ static int __cpuinit msm_cpufreq_init(struct cpufreq_policy *policy)
 	policy->min = CONFIG_MSM_CPU_FREQ_MIN;
 	policy->max = CONFIG_MSM_CPU_FREQ_MAX;
 #endif
-
-/** cmdline **/
-	policy->cpuinfo.min_freq = arg_minfreq;
-	policy->min = arg_minfreq;
-/** cmdline end **/
 
 	cur_freq = acpuclk_get_rate(policy->cpu);
 	if (cpufreq_frequency_table_target(policy, table, cur_freq,
